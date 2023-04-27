@@ -4,8 +4,9 @@ import {
   type NextAuthOptions,
   type DefaultSession,
 } from "next-auth";
-import DiscordProvider from "next-auth/providers/discord";
+import SpotifyProvider from "next-auth/providers/spotify";
 import { env } from "~/env.mjs";
+
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,6 +18,7 @@ declare module "next-auth" {
   interface Session extends DefaultSession {
     user: {
       id: string;
+      accessToken: string;
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
@@ -35,19 +37,26 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: user.id,
-      },
-    }),
+    session({ session, token }) {
+      if (token && session.user) {
+          session.user.id = token.id as string;
+          session.user.accessToken = token.accessToken as string;
+      }
+      return session;
+    },
+    jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.refresh_token;
+      }
+      return token;
+    }
   },
+  secret: env.NEXTAUTH_SECRET,
   providers: [
-    DiscordProvider({
-      clientId: env.DISCORD_CLIENT_ID,
-      clientSecret: env.DISCORD_CLIENT_SECRET,
-    }),
+    // DiscordProvider({
+    //   clientId: env.DISCORD_CLIENT_ID,
+    //   clientSecret: env.DISCORD_CLIENT_SECRET,
+    // }),
     /**
      * ...add more providers here.
      *
@@ -57,6 +66,12 @@ export const authOptions: NextAuthOptions = {
      *
      * @see https://next-auth.js.org/providers/github
      */
+
+    SpotifyProvider({
+      authorization: 'https://accounts.spotify.com/authorize?scope=user-read-email,playlist-read-private,user-read-currently-playing',
+      clientId: env.SPOTIFY_CLIENT_ID,
+      clientSecret: env.SPOTIFY_CLIENT_SECRET,
+    }),
   ],
 };
 
