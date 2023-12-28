@@ -6,26 +6,12 @@ import { signIn, signOut, useSession, getProviders } from "next-auth/react";
 import type { Provider } from "next-auth/providers";
 
 
-
-
-
-
-
 type HomeProps = {
   providers: Record<string, Provider>;
 };
 
 const Home: NextPage<HomeProps> = ({ providers }) => {
   const { data: sessionData } = useSession();
-  // const hello = api.example.hello.useQuery({ text: "from tRPC" });
-  // const {data: accessToken} = api.spotify.getAccessToken.useQuery();
-  // console.log("accessToken: ", accessToken)
-  // const providers = getProviders()
-
-  // if (accessToken) {
-  //   // const {data: currentSong} = api.spotify.getCurrentSong.useQuery({access_token: accessToken.access_token});
-  // }
-
   return (
     <>
       <Head>
