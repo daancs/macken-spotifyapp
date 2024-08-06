@@ -25,11 +25,13 @@ export default function Page(props: PageProps) {
   return (
     <>
       {/* Background */}
-      <div className="fixed w-screen h-screen bg-black overflow-hidden flex flex-col items-cente -z-50">
-        <div style={{backgroundImage: `url(${currentSongImage})`}} className={`bg-cover bg-center w-full h-full blur-lg`}></div>
+      <div className="fixed w-screen h-screen bg-black overflow-hidden flex flex-col items-center -z-50">
+        <div style={{backgroundImage: `url(${currentSongImage})`}} className={`bg-cover bg-center w-full h-full blur-lg brightness-50`}></div>
       </div>
-
-      {props.children ? props.children : ""}
+    
+      <div className="w-screen h-screen flex justify-center items-end">
+        {props.children ? props.children : ""}
+      </div>    
 
 
     </>
